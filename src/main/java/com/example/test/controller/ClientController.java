@@ -2,7 +2,6 @@ package com.example.test.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -12,8 +11,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +24,7 @@ import com.example.test.model.User;
 import com.example.test.model.request.ClientRequest;
 import com.example.test.repository.ClientRepository;
 import com.example.test.repository.CompanyRepository;
-import com.example.test.service.mainService;
+import com.example.test.service.MainService;
 import com.example.test.utils.DateUtils;
 import com.example.test.utils.JwtUtils;
 
@@ -35,24 +32,19 @@ import com.example.test.utils.JwtUtils;
 @RestController
 @RequestMapping("/api/client")
 public class ClientController {
-  @Autowired
-  AuthenticationManager authenticationManager;
-
-  @Autowired
-  PasswordEncoder encoder;
 
   @Autowired
   ClientRepository clientRepository;
-  
+
   @Autowired
   CompanyRepository companyRepository;
 
   @Autowired
-  mainService mainService;
+  MainService mainService;
 
   @Autowired
   JwtUtils jwtUtils;
-  
+
   @Autowired
   DateUtils dateUtils;
 
@@ -62,13 +54,13 @@ public class ClientController {
 
     User builder = mainService.getUserFromToken(request);
 
-    if(!companyRepository.exists(Example.of( new Company(clientRequest.getCompanyId())))) {
+    if (!companyRepository.exists(Example.of(new Company(clientRequest.getCompanyId())))) {
       return ResponseEntity.badRequest().body("Company is not exists");
     }
-    
-    Client client = saveClient(clientRequest.getCompanyId(), clientRequest.getName(),
-        clientRequest.getEmail(), clientRequest.getPhone(), builder.getUsername(), builder.getUsername());
-    clientRepository.save(client);
+
+    clientRepository.save(new Client(clientRequest.getCompanyId(), clientRequest.getName(), clientRequest.getEmail(),
+        clientRequest.getPhone(), builder.getUsername(), dateUtils.getNow(), builder.getUsername(),
+        dateUtils.getNow()));
 
     return ResponseEntity.ok("Client created successfully!");
   }
@@ -82,14 +74,14 @@ public class ClientController {
     List<Client> clientList = new ArrayList<Client>();
     int failCnt = 0;
     for (ClientRequest clientRequest : clientRequestList) {
-      
-      if(!companyRepository.exists(Example.of( new Company(clientRequest.getCompanyId())))) {
+
+      if (!companyRepository.exists(Example.of(new Company(clientRequest.getCompanyId())))) {
         failCnt++;
       }
-      
-      Client client = saveClient(clientRequest.getCompanyId(), clientRequest.getName(),
-          clientRequest.getEmail(), clientRequest.getPhone(), builder.getUsername(), builder.getUsername());
-      clientList.add(client);
+
+      clientList.add(new Client(clientRequest.getCompanyId(), clientRequest.getName(), clientRequest.getEmail(),
+          clientRequest.getPhone(), builder.getUsername(), dateUtils.getNow(), builder.getUsername(),
+          dateUtils.getNow()));
     }
     int successCnt = clientRepository.saveAll(clientList).size();
     return ResponseEntity.ok("Client created " + successCnt + " successfully! " + failCnt + " fail.");
@@ -99,7 +91,7 @@ public class ClientController {
   @PreAuthorize("hasAuthority('DELETE')")
   public ResponseEntity<?> delete(HttpServletRequest request, @Valid @RequestBody ClientRequest clientRequest) {
     Client client = new Client(clientRequest.getId());
-    if(!clientRepository.exists(Example.of(client))) {
+    if (!clientRepository.exists(Example.of(client))) {
       return ResponseEntity.badRequest().body("Client is not exists");
     }
     clientRepository.delete(client);
@@ -109,16 +101,16 @@ public class ClientController {
   @PostMapping("/update")
   @PreAuthorize("hasAuthority('EDIT')")
   public ResponseEntity<?> update(HttpServletRequest request, @Valid @RequestBody ClientRequest clientRequest) {
-    
+
     User builder = mainService.getUserFromToken(request);
-    
-    if(!clientRepository.exists(Example.of(new Client(clientRequest.getId())))) {
+
+    if (!clientRepository.exists(Example.of(new Client(clientRequest.getId())))) {
       return ResponseEntity.badRequest().body("Client is not exists");
     }
-    if(!companyRepository.exists(Example.of( new Company(clientRequest.getCompanyId())))) {
+    if (!companyRepository.exists(Example.of(new Company(clientRequest.getCompanyId())))) {
       return ResponseEntity.badRequest().body("Company is not exists");
     }
-    
+
     clientRepository.updateById(clientRequest.getCompanyId(), clientRequest.getName(), clientRequest.getEmail(),
         clientRequest.getPhone(), builder.getUsername(), dateUtils.getNow(), clientRequest.getId());
 
@@ -155,18 +147,5 @@ public class ClientController {
 
     return ResponseEntity.ok().body(list);
   }
-  
-  public Client saveClient(Long companyId, String name, String email, 
-      String phone, String createBy, String updateBy) {
-    Client client = new Client();
-    client.setCompanyId(companyId);
-    client.setName(name);
-    client.setEmail(email);
-    client.setPhone(phone);
-    client.setCreateAt(dateUtils.getNow());
-    client.setCreateBy(createBy);
-    client.setUpdateAt(dateUtils.getNow());
-    client.setUpdateBy(updateBy);
-    return client;
-  }
+
 }

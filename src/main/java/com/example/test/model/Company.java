@@ -34,6 +34,16 @@ public class Company {
   public Company(Long id) {
     this.id = id;
   }
+  public Company(String name, String address, String createBy, 
+      Timestamp createAt, String updateBy, Timestamp updateAt) {
+    this.name = name;
+    this.address = address;
+    this.createBy= createBy;
+    this.createAt = createAt;
+    this.updateBy = updateBy;
+    this.updateAt = updateAt;
+  }
+  
   public Long getId() {
     return id;
   }

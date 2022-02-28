@@ -19,11 +19,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.test.model.Client;
 import com.example.test.model.Company;
 import com.example.test.model.User;
 import com.example.test.model.request.CompanyRequest;
 import com.example.test.repository.CompanyRepository;
-import com.example.test.service.mainService;
+import com.example.test.service.MainService;
 import com.example.test.utils.DateUtils;
 import com.example.test.utils.JwtUtils;
 
@@ -41,7 +42,7 @@ public class CompanyController {
   CompanyRepository companyRepository;
   
   @Autowired
-  mainService mainService;
+  MainService mainService;
 
   @Autowired
   JwtUtils jwtUtils;
@@ -59,33 +60,12 @@ public class CompanyController {
     }
     
     User builder = mainService.getUserFromToken(request);
-
-    // Create new user's account
-    Company company = saveCompany(companyRequest.getName(), 
-        companyRequest.getAddress(), builder.getUsername(), builder.getUsername());
-
-    companyRepository.save(company);
-
+    companyRepository.save(new Company(companyRequest.getName(), companyRequest.getAddress(), 
+        builder.getUsername(), dateUtils.getNow(), builder.getUsername(), dateUtils.getNow()));
+    
     return ResponseEntity.ok("Company created successfully!");
   }
 
-//  @PostMapping("/createAll")
-//  @PreAuthorize("hasAuthority('CREATE')")
-//  public ResponseEntity<?> createAll(HttpServletRequest request,
-//      @Valid @RequestBody List<CompanyRequest> companyRequestList) {
-//
-//    User builder = mainService.getUserFromToken(request);
-//    List<Company> companyList = new ArrayList<Company>();
-//
-//    for (CompanyRequest companyRequest : companyRequestList) {
-//      Company company = companyService.saveCompany(companyRequest.getName(), 
-//          companyRequest.getAddress(), builder.getUsername(), builder.getUsername());
-//      companyList.add(company);
-//    }
-//    int cnt = companyRepository.saveAll(companyList).size();
-//    return ResponseEntity.ok("Company created " + cnt + "successfully!");
-//  }
-  
   @PostMapping("/delete")
   @PreAuthorize("hasAuthority('DELETE')")
   public ResponseEntity<?> delete(HttpServletRequest request, @Valid @RequestBody CompanyRequest companyRequest) {
@@ -131,16 +111,5 @@ public class CompanyController {
     List<Company> list = companyRepository.findAll(example);
 
     return ResponseEntity.ok().body(list);
-  }
- 
-  public Company saveCompany(String name, String address, String createBy, String updateBy) {
-    Company company = new Company();
-    company.setName(name);
-    company.setAddress(address);
-    company.setCreateAt(dateUtils.getNow());
-    company.setCreateBy(createBy);
-    company.setUpdateAt(dateUtils.getNow());
-    company.setUpdateBy(updateBy);
-    return company;
   }
 }

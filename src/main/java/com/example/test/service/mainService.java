@@ -10,7 +10,7 @@ import com.example.test.repository.UserRepository;
 import com.example.test.utils.JwtUtils;
 
 @Service
-public class mainService {
+public class MainService {
   @Autowired
   JwtUtils jwtUtils;
   @Autowired

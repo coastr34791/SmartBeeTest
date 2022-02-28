@@ -1,7 +1,6 @@
 package com.example.test.model;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,6 +37,17 @@ public class Client {
   public Client() {}
   public Client(Long id) {
     this.id = id;
+  }
+  public Client(Long companyId, String name, String email, 
+      String phone, String createBy, Timestamp createAt, String updateBy, Timestamp updateAt) {
+    this.companyId = companyId;
+    this.name = name;
+    this.email = email;
+    this.phone = phone;
+    this.createBy= createBy;
+    this.createAt = createAt;
+    this.updateBy = updateBy;
+    this.updateAt = updateAt;
   }
   
   public Long getId() {
