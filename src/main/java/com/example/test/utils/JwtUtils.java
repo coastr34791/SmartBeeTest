@@ -50,12 +50,7 @@ public class JwtUtils {
   }
 
   public String getUserNameFromJwtToken(String token) {
-    System.out.println("getUserNameFromJwtToken~~~~~~~~~~~~~~~~~~~~~~~");
     Jws<Claims> o = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-    System.out.println("getBody     :: "+o.getBody());
-    System.out.println("getSubject  :: "+o.getBody().getSubject());
-    System.out.println("getId       :: "+o.getBody().getId());
-    System.out.println("getAudience :: "+o.getBody().getAudience());
     return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
   }
 

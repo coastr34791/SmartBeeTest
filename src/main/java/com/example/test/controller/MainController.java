@@ -53,13 +53,10 @@ public class MainController {
   @ApiOperation(value="signin", notes="登入")
   @PostMapping("/signin")
   public ResponseEntity<?> signin(@Valid @RequestBody LoginRequest loginRequest) {
-    System.out.println("signin=====================================================================");
-    System.out.println(loginRequest.getUsername()+"============"+loginRequest.getPassword());
 
     Authentication authentication = authenticationManager
         .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-    System.out.println("authentication::" + authentication);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();

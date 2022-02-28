@@ -19,7 +19,6 @@ public class MainService {
   public User getUserFromToken(HttpServletRequest request) {
     String jwt = jwtUtils.getJwtFromCookies(request);
     String name = jwtUtils.getUserNameFromJwtToken(jwt);
-    System.out.println("jwt :: "+jwt);
     return userRepository.findByUsername(name).get();
   }
   
