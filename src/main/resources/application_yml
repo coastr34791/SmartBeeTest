@@ -1,0 +1,28 @@
+#server:
+#  port: 9100 # 伺服器的port號
+#
+##spring:
+##  console:
+##    enabled: true
+##  datasource:
+##    driver-class-name: org.h2.Driver
+##    url: jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1
+##    initialize: true
+##    sql-script-encoding: UTF-8
+#    
+#spring:
+#  h2:
+#    console:
+#      path: /h2
+#      enabled: true
+#    datasource:
+#      url: jdbc:h2:mem:test;MODE=MySQL;DB_CLOSE_DELAY=-1
+#      driver-class-name: org.h2.Driver
+#      username: alec
+#      password: alectoo
+#      initialize: true
+#      sql-script-encoding: UTF-8
+#
+#  jpa:
+#    database-platform: org.hibernate.dialect.H2Dialect
+#    
