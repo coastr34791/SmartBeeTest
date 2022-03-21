@@ -11,15 +11,13 @@ import com.example.test.utils.JwtUtils;
 
 @Service
 public class MainService {
-  @Autowired
-  JwtUtils jwtUtils;
-  @Autowired
-  UserRepository userRepository;
-  
-  public User getUserFromToken(HttpServletRequest request) {
-    String jwt = jwtUtils.getJwtFromCookies(request);
-    String name = jwtUtils.getUserNameFromJwtToken(jwt);
-    return userRepository.findByUsername(name).get();
-  }
-  
+    @Autowired
+    UserRepository userRepository;
+
+    public User getUserFromToken(HttpServletRequest request) {
+        String jwt = JwtUtils.getJwtFromCookies(request);
+        String name = JwtUtils.getUserNameFromJwtToken(jwt);
+        return userRepository.findByUsername(name).get();
+    }
+
 }

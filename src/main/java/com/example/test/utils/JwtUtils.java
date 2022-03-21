@@ -21,15 +21,15 @@ public class JwtUtils {
   private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
   @Value("${test.app.jwtSecret}")
-  private String jwtSecret;
+  private static String jwtSecret;
 
   @Value("${test.app.jwtExpirationMs}")
-  private int jwtExpirationMs;
+  private static int jwtExpirationMs;
 
   @Value("${test.app.jwtCookieName}")
-  private String jwtCookie;
+  private static String jwtCookie;
 
-  public String getJwtFromCookies(HttpServletRequest request) {
+  public static String getJwtFromCookies(HttpServletRequest request) {
     Cookie cookie = WebUtils.getCookie(request, jwtCookie);
     if (cookie != null) {
       return cookie.getValue();
@@ -38,18 +38,18 @@ public class JwtUtils {
     }
   }
 
-  public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
+  public static ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
     String jwt = generateTokenFromUsername(userPrincipal.getUsername());
     ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
     return cookie;
   }
 
-  public ResponseCookie getCleanJwtCookie() {
+  public static ResponseCookie getCleanJwtCookie() {
     ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
     return cookie;
   }
 
-  public String getUserNameFromJwtToken(String token) {
+  public static String getUserNameFromJwtToken(String token) {
     Jws<Claims> o = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
     return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
   }
@@ -73,7 +73,7 @@ public class JwtUtils {
     return false;
   }
   
-  public String generateTokenFromUsername(String username) {   
+  public static String generateTokenFromUsername(String username) {
     return Jwts.builder()
         .setSubject(username)
         .setIssuedAt(new Date())
